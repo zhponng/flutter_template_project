@@ -10,7 +10,14 @@ import 'package:flutter/material.dart';
 
 const Color _primaryColor = Color(0xFFFFC107);
 
+enum AppThemeType {
+  light,
+  dark,
+  system,
+}
+
 class AppThemes{
+
   static ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     // 主要影响标题栏颜色，如果未设置[primarySwatch], 改颜色也会影响各组件的颜色

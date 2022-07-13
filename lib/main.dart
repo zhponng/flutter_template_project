@@ -3,6 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_template_project/error_handler/error_handler.dart';
 import 'package:flutter_template_project/theme/app_theme.dart';
+import 'package:flutter_template_project/theme/app_theme_state_model.dart';
+import 'dart:developer' as developer;
+
+import 'package:provider/provider.dart';
 
 void main() {
   runZoned(
@@ -19,11 +23,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: AppThemes.lightTheme,
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      darkTheme: AppThemes.darkTheme,
+    return ChangeNotifierProvider(
+      create: (BuildContext context) { return AppThemeStateModel(); },
+      child: Consumer<AppThemeStateModel>(
+        builder: (context, appThemeState, child) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: appThemeState.currentAppThemeType == AppThemeType.dark ? AppThemes.darkTheme : AppThemes.lightTheme,
+            home: MyHomePage(title: 'Flutter Demo Home Page',),
+            darkTheme: appThemeState.currentAppThemeType == AppThemeType.light ? null : AppThemes.darkTheme,
+          );
+        },
+      ),
     );
   }
 }
@@ -101,6 +112,24 @@ class _MyHomePageState extends State<MyHomePage> {
               '${_counter}',
               style: Theme.of(context).textTheme.headline4,
             ),
+            MaterialButton(onPressed: (){
+              setState(() {
+                Provider.of<AppThemeStateModel>(context, listen: false).currentAppThemeType = AppThemeType.dark;
+              });
+            }, child: Text('黑暗模式'),),
+
+            MaterialButton(onPressed: (){
+              setState(() {
+                Provider.of<AppThemeStateModel>(context, listen: false).currentAppThemeType = AppThemeType.light;
+              });
+            }, child: Text('白色模式'),),
+
+            MaterialButton(onPressed: (){
+              setState(() {
+                Provider.of<AppThemeStateModel>(context, listen: false).currentAppThemeType = AppThemeType.system;
+              });
+
+            }, child: Text('跟随系统'),),
           ],
         ),
       ),
